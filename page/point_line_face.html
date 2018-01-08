@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>点、线、面</title>
+</head>
+<body>
+
+<div id="threeContainer"></div>
+
+<script src="../js/three.js"></script>
+<script src="../js/common.js"></script>
+<script>
+
+    // ********** 三维渲染基本元素 ***********
+
+    // 场景
+    var scene;
+    // 相机
+    var camera;
+    // 渲染器
+    var renderer;
+    // 画布容器
+    var container;
+
+    // 初始化
+    initTHREE();
+
+    // 添加需要渲染的对象
+    addMyObj();
+
+    // 开始渲染
+    render();
+
+    function initTHREE() {
+        // 初始化场景
+        scene = new THREE.Scene();
+        // 初始化相机
+        camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 500);
+        // 初始化渲染器
+        renderer = new THREE.WebGLRenderer();
+        // 获取承载画布(Canvas)的容器
+        container = document.getElementById("threeContainer");
+
+        // 设置相机的位置
+        camera.position.set(0, 0, 25);
+
+        // 设置渲染时的参数
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setClearColor(0x000000);
+
+        // 将画布添加到容器当中
+        container.appendChild(renderer.domElement);
+    }
+
+    function addMyObj() {
+        // 添加点
+        addPoint();
+
+        // 添加线段
+        addLine();
+
+        // 添加面
+        addFace();
+    }
+
+    function addPoint() {
+        // 设置单个点的三维坐标
+        var pointGeo = new THREE.Geometry();
+        pointGeo.vertices = pointData;
+
+        // 设置单个点的颜色等信息
+        var pointMat = new THREE.PointsMaterial(
+            {
+//                size:10,
+                color: 0xff3f3f
+            }
+        );
+
+        // 根据点坐标和材质，确定一个点对象
+        var pointMesh = new THREE.Points(pointGeo, pointMat);
+
+        // 向场景中添加点，加入场景的对象才会被渲染到屏幕上
+        scene.add(pointMesh);
+    }
+
+    function addLine() {
+        // 设置线段的端点
+        var lineGeo = new THREE.Geometry();
+        lineGeo.vertices = lineData;
+
+        // 设置线段的颜色
+        var lineMat = new THREE.LineBasicMaterial(
+            {
+                color: 0xffff00
+            }
+        );
+
+        // 根据端点数据和颜色数据，确定一条线段
+        var lineMesh = new THREE.Line(lineGeo, lineMat);
+
+        // 在场景中添加线段
+        scene.add(lineMesh);
+    }
+
+    function addFace() {
+        // 设置顶点信息
+        var faceGeo = new THREE.Geometry();
+        faceGeo.vertices = faceData;
+
+        // 设置三角面由哪些点，根据什么顺序组成
+        var face = new THREE.Face3(0, 1, 2);
+        faceGeo.faces.push(face);
+
+        // 设置单个面的材质
+        var faceMat = new THREE.MeshBasicMaterial(
+            {
+//                side:THREE.DoubleSide,
+                color: 0x4c4cff
+            }
+        );
+
+        // 根据几何信息和材质信息，确定三维空间的一个几何体
+        var faceMesh = new THREE.Mesh(faceGeo, faceMat);
+        // 将自定义三角面加入场景中
+        scene.add(faceMesh);
+    }
+
+    // 渲染函数，通过渲染器 renderer 将加入了场景，并且在 camera 视野内的对象绘制到屏幕上。
+    function render() {
+        renderer.render(scene, camera);
+    }
+
+</script>
+
+</body>
+</html>

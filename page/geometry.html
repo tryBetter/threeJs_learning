@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>几何体</title>
+</head>
+<body>
+
+<div id="threeContainer"></div>
+
+<script src="../js/three.js"></script>
+<script src="../js/common.js"></script>
+<script>
+    // ********** 三维渲染基本元素 ***********
+
+    // 场景
+    var scene;
+    // 相机
+    var camera;
+    // 渲染器
+    var renderer;
+    // 画布容器
+    var container;
+
+    // 初始化
+    initTHREE();
+
+    // 添加需要渲染的几何对象
+    addGeometry();
+
+    // 开始渲染
+    render();
+
+
+    function initTHREE() {
+        // 初始化场景
+        scene = new THREE.Scene();
+        // 初始化相机
+        camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 500);
+        // 初始化渲染器
+        renderer = new THREE.WebGLRenderer();
+        // 获取承载画布(Canvas)的容器
+        container = document.getElementById("threeContainer");
+
+        // 设置相机的位置
+        camera.position.set(0, 0, 25);
+
+        // 设置渲染时的参数
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setClearColor(0x000000);
+
+        // 将画布添加到容器当中
+        container.appendChild(renderer.domElement);
+    }
+
+
+    function addGeometry() {
+
+        addBox();
+
+        addCircle();
+
+        addPlane();
+    }
+
+    function addBox() {
+        var geometry = new THREE.BoxBufferGeometry(4, 4, 4);
+        var material = new THREE.MeshBasicMaterial(
+            {
+//                wireframe:true,
+                color: 0x00ff00
+            }
+        );
+        var cube = new THREE.Mesh(geometry, material);
+        cube.position.set(-14, 0, 0);
+        scene.add(cube);
+    }
+
+    function addCircle() {
+        var geometry = new THREE.CircleBufferGeometry( 5, 32 );
+        var material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
+        var circle = new THREE.Mesh( geometry, material );
+        scene.add( circle );
+    }
+
+    function addPlane() {
+        var geometry = new THREE.PlaneBufferGeometry( 8, 8, 8 );
+        var material = new THREE.MeshBasicMaterial( {color: 0x4c4cff, side: THREE.DoubleSide} );
+        var plane = new THREE.Mesh( geometry, material );
+        plane.position.set(15,0,0);
+        scene.add( plane );
+    }
+
+
+    // 渲染函数，通过渲染器 renderer 将加入了场景，并且在 camera 视野内的对象绘制到屏幕上。
+    function render() {
+        renderer.render(scene, camera);
+    }
+
+
+</script>
+</body>
+</html>
