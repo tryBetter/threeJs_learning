@@ -21,8 +21,8 @@
 + 几何形状（Geometry）：包含三维物体的顶点数据，面片数据，UV坐标，法向量等。    
 + 表面材质（Material）：设置三维物体表面的颜色，图片，光照效果等。    
 
-  > MeshBasicMaterial：对光照无感，给几何体一种简单的颜色或显示线框。
-  > MeshLambertMaterial：这种材质对光照有反应，用于创建暗淡的不发光的物体。
+  > MeshBasicMaterial：对光照无感，给几何体一种简单的颜色或显示线框。    
+  > MeshLambertMaterial：这种材质对光照有反应，用于创建暗淡的不发光的物体。    
   > MeshPhongMaterial：这种材质对光照也有反应，用于创建金属类明亮的物体。
 
 ### 四、纹理贴图
@@ -37,12 +37,12 @@
 + 只有三维对象可透视（translate）时，才需要处理多个对象的叠加显示效果。    
 
 **常用叠加效果：**
-> NoBlending：重叠三维物体颜色不做混合。
-> NormalBlending：根据法向量与rgb值运算后进行混合。
-> AdditiveBlending：rgb值按比例相加进行混合。
-> SubtractiveBlending：rgb值按比例做差进行混合。
-> MultiplyBlending：rgb值按比例做乘积进行混合。
-> CustomBlending：自定义混合系数。
+> NoBlending：重叠三维物体颜色不做混合。    
+> NormalBlending：根据法向量与rgb值运算后进行混合。    
+> AdditiveBlending：rgb值按比例相加进行混合。    
+> SubtractiveBlending：rgb值按比例做差进行混合。    
+> MultiplyBlending：rgb值按比例做乘积进行混合。    
+> CustomBlending：自定义混合系数。    
 
 
 ```
