@@ -11,12 +11,10 @@
 
 ### 二、相机分类    
 + 正交投影相机（OrthographicCamera）：物体大小不因远近而变化。     
-+ 透视投影相机（PerspectiveCamera）：遵循近大远小的空间规则。    
-
-  #### 1. 透视投影相机
++ 透视投影相机（PerspectiveCamera）：遵循近大远小的空间规则。  
+#### 1. 透视投影相机
 ![](./assets/images/Perspective.jpg)    
-　
-  #### 2. 正交投影相机
+#### 2. 正交投影相机
 ![](./assets/images/Orthographic.jpg)    
 
 ### 三、三维物体 = 几何形状 + 表面材质
@@ -32,7 +30,7 @@
   ![](./assets/images/earthMapping.png)
 > 在三维物体上贴图，可以通过UV映射的方式来实现。可以理解为将三维对象展开成一个平面，然后将图片贴在展开的平面上，最后将展开的平面恢复成三维对象。**实际上是建立了三维几何体与二维平面图的映射关系。**
 
-**附录：UV平面坐标系**
+**附录：UV平面坐标系**    
 ![](./assets/images/UVmapping.png)
 
 ### 五、透明三维对象的叠加显示    
