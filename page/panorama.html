@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>平面贴图</title>
+</head>
+<body>
+
+<div id="threeContainer"></div>
+
+<script src="../js/three.js"></script>
+<script src="../js/common.js"></script>
+<script src="../js/OrbitControls.js"></script>
+<script>
+    // ********** 三维渲染基本元素 ***********
+
+    // 场景
+    var scene;
+    // 相机
+    var camera;
+    // 渲染器
+    var renderer;
+    // 画布容器
+    var container;
+    // 相机控制器
+    var control;
+
+    // 初始化
+    initTHREE();
+
+    // 添加需要渲染的几何对象
+    addGeometry();
+
+    // 开始渲染
+    animate();
+
+
+    function initTHREE() {
+        // 初始化场景
+        scene = new THREE.Scene();
+        // 初始化相机
+        camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 500);
+        // 初始化渲染器
+        renderer = new THREE.WebGLRenderer();
+        // 获取承载画布(Canvas)的容器
+        container = document.getElementById("threeContainer");
+
+        control = new THREE.OrbitControls(camera, container);
+
+        // 设置相机的位置
+        camera.position.set(0, 0, 15);
+
+        // 设置渲染时的参数
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setClearColor(0x000000);
+
+        // 将画布添加到容器当中
+        container.appendChild(renderer.domElement);
+    }
+
+    function addGeometry() {
+
+        // 添加平面
+        addPlane();
+    }
+
+    function addPlane() {
+
+        for (var i = 0; i < 6; i++) {
+            var geometry = new THREE.PlaneBufferGeometry(8, 8, 8);
+            var material = new THREE.MeshBasicMaterial(
+                {
+                    // side : THREE.DoubleSide,
+                    map: (new THREE.TextureLoader()).load("../assets/images/Pannorama_001_" + (i + 1) + "_high.jpg")
+                }
+            );
+            var plane = new THREE.Mesh(geometry, material);
+            plane.position.set(0, 0, 0);
+            scene.add(plane);
+        }
+
+        // 上
+        scene.children[0].translateY(4);
+        scene.children[0].rotateZ(-Math.PI / 2);
+        scene.children[0].rotateY(Math.PI / 2);
+        scene.children[0].name = 0;
+        // 后
+        scene.children[1].translateZ(4);
+        scene.children[1].rotateY(Math.PI);
+        scene.children[1].name = 1;
+        // 左
+        scene.children[2].translateX(-4);
+        scene.children[2].rotateY(Math.PI / 2);
+        scene.children[2].name = 2;
+        // 前
+        scene.children[3].translateZ(-4);
+        scene.children[3].name = 3;
+        // 右
+        scene.children[4].translateX(4);
+        scene.children[4].rotateY(-Math.PI / 2);
+        scene.children[4].name = 4;
+        // 下
+        scene.children[5].translateY(-4);
+        scene.children[5].rotateX(-Math.PI / 2);
+        scene.children[5].rotateZ(Math.PI);
+        scene.children[5].name = 5;
+
+    }
+
+
+    // 渲染函数，通过渲染器 renderer 将加入了场景，并且在 camera 视野内的对象绘制到屏幕上。
+    function render() {
+        renderer.render(scene, camera);
+    }
+
+    function animate() {
+        render();
+        control.update();
+        requestAnimationFrame(animate);
+    }
+
+</script>
+</body>
+</html>
