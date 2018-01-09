@@ -60,23 +60,34 @@
 
     function addGeometry() {
 
+        // 添加盒子几何体
         addBox();
 
+        // 添加圆形
         addCircle();
 
+        // 添加平面
         addPlane();
     }
 
     function addBox() {
+
+        // 设置几何体的顶点
         var geometry = new THREE.BoxBufferGeometry(4, 4, 4);
+
+        // 设置表面材质
         var material = new THREE.MeshBasicMaterial(
             {
 //                wireframe:true,
                 color: 0x00ff00
             }
         );
+
+        // 根据顶点和表面材质确定一个几何对象
         var cube = new THREE.Mesh(geometry, material);
         cube.position.set(-14, 0, 0);
+
+        // 将几何体添加到场景当中
         scene.add(cube);
     }
 
