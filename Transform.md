@@ -29,6 +29,21 @@ var euler = new THREE.Euler ( x , y , z ) ;
 个人理解：四元数可以认为是以指定向量为基准，根据右手定则进行旋转的一种描述方式。
 
 three.js中关于四元数的使用。
-var quaternion = new THREE.Quaternion();
+var quaternion = new THREE.Quaternion(x,y,z,w);
 
 3. 旋转矩阵
+ 
+  [ m11 , m12 , m13 , m14 ,
+    m21 , m22 , m23 , m24 ,
+    m31 , m32 , m33 , m34 ,
+    m41 , m42 , m43 , m44 ]
+  
+  3*3 矩阵描述旋转变化：  
+    m11 , m12 , m13
+    m21 , m22 , m23
+    m31 , m32 , m33
+   
+  第四列描述了位移变化  
+                    m14
+                    m24
+                    m34

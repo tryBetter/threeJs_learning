@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>平移与旋转</title>
+    <style>
+        body html{
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+<div id="threeContainer"></div>
+<div>
+    <div>模型数据</div>
+</div>
+<script src="../js/three.js"></script>
+<script src="../js/Tween.js"></script>
+<script src="../js/OBJLoader.js"></script>
+<script src="../js/MTLLoader.js"></script>
+<script src="../js/DDSLoader.js"></script>
+<script src="../js/OrbitControls.js"></script>
+<script src="../js/dat.gui.min.js"></script>
+<script>
+    // 场景
+    var scene;
+    // 相机
+    var camera;
+    // 渲染器
+    var renderer;
+    // 画布容器
+    var container;
+    // 计算光标与模型交点的辅助射线
+    var raycaster = new THREE.Raycaster();
+    var mousePosition = new THREE.Vector2();
+    var modelObj;
+
+    var attr = {
+        eulerX:0,
+        eulerY:0,
+        eulerZ:0,
+        quaternionX:0,
+        quaternionY:0,
+        quaternionZ:0,
+        quaternionW:0,
+        matrix:0,
+        eulerRotate:function(){
+            console.log("euler rotate");
+        },
+        quaternionRotate:function(){
+            console.log("quaternion rotate");
+        },
+        matrixRotate:function(){
+            console.log("matrix rotate");
+        }
+    };
+
+    // 初始化
+    initTHREE();
+
+    // 开始渲染
+    animate();
+
+    // 初始化控制面板
+    initGUI();
+    // 绑定事件
+    bindEvent();
+
+    function initGUI(){
+        var gui = new dat.GUI();
+
+        var eulerFolder = gui.addFolder("Euler");
+        var quaternionFolder = gui.addFolder("Quaternion");
+        var matrixFolder = gui.addFolder("Matrix");
+
+        eulerFolder.add(attr,"eulerX",-180,180).onChange(function(value){
+            modelObj.rotation.x = value;
+        });
+
+        eulerFolder.add(attr,"eulerY",-180,180).step(1).onChange(function(value){
+            modelObj.rotation.y = value;
+        });
+
+        eulerFolder.add(attr,"eulerZ",-180,180).step(1).onChange(function(value){
+            modelObj.rotation.z = value;
+        });
+
+        matrixFolder.add(attr,"matrix");
+        quaternionFolder.add(attr,"quaternionX");
+
+        eulerFolder.add(attr,"eulerRotate");
+        quaternionFolder.add(attr,"quaternionRotate");
+        matrixFolder.add(attr,"matrixRotate");
+
+    }
+
+    function initTHREE() {
+        // 初始化场景
+        scene = new THREE.Scene();
+        // 初始化相机
+        camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 500);
+        // 初始化渲染器
+        renderer = new THREE.WebGLRenderer();
+        // 获取承载画布(Canvas)的容器
+        container = document.getElementById("threeContainer");
+        // 添加环境光
+        var ambient = new THREE.AmbientLight(0xffffff);
+        scene.add(ambient);
+        scene.add(new THREE.AxisHelper(10));
+
+        // 设置相机的位置
+        camera.position.set(0, 10, 10);
+        camera.lookAt(new THREE.Vector3(0,0,0));
+
+//        control = new THREE.OrbitControls(new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 500), container);
+        control = new THREE.OrbitControls(camera, container);
+
+        // 设置渲染时的参数
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setClearColor(0x000000);
+
+        // 将画布添加到容器当中
+        container.appendChild(renderer.domElement);
+        addModel();
+    }
+
+    // 渲染函数，通过渲染器 renderer 将加入了场景，并且在 camera 视野内的对象绘制到屏幕上。
+    function render() {
+        renderer.render(scene, camera);
+    }
+
+    function animate() {
+        render();
+        TWEEN.update();
+        control.update();
+        requestAnimationFrame(animate);
+    }
+
+    function addModel(){
+
+        var onProgress = function ( xhr ) {
+            if ( xhr.lengthComputable ) {
+                var percentComplete = xhr.loaded / xhr.total * 100;
+                console.log( Math.round(percentComplete, 2) + '% downloaded' );
+            }
+        };
+        var onError = function ( xhr ) { };
+
+        THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
+        var mtlLoader = new THREE.MTLLoader();
+        mtlLoader.setPath( '../assets/model/' );
+        mtlLoader.load( 'VT_Model.mtl', function( materials ) {
+            materials.preload();
+            var objLoader = new THREE.OBJLoader();
+            objLoader.setMaterials( materials );
+            objLoader.setPath( '../assets/model/' );
+            objLoader.load( 'VT_Model.obj', function ( object ) {
+                modelObj = object;
+                if (object.children[0]) {
+                    object.children[0].material.forEach(function (element) {
+                        element.opacity = 1;
+                    });
+                }
+
+                // 设置模型居中显示
+                object.children[0].geometry.center();
+                // 由于创建模型的坐标系与 webgl 坐标系的 Z 轴相反，因此对模型做90度翻转,注意旋转模型要在计算全景热点的地面投影之后
+                object.rotateX(Math.PI / 2);
+                scene.add( object );
+            }, onProgress, onError );
+        });
+
+    }
+
+    function bindEvent(){
+//        container.addEventListener("click",clickFun);
+    }
+
+    function clickFun(event){
+        // 解决浏览器兼容性问题
+        var eventObj = event || window.event;
+        // 鼠标坐标系归一化
+        mousePosition.x = (eventObj.clientX / window.innerWidth) * 2 - 1;
+        mousePosition.y = -(eventObj.clientY / window.innerHeight) * 2 + 1;
+        // 根据一条射线来计算交点
+        raycaster.setFromCamera(mousePosition, camera);
+        var intersects = raycaster.intersectObjects(modelObj.children, true);
+        if(intersects && intersects.length>0){
+            console.dir(intersects[0]);
+            new TWEEN.Tween(camera.position).to({
+                x: intersects[0].point.x,
+                y: intersects[0].point.y+1.0,
+                z: intersects[0].point.z
+            }, 2000)
+                .easing(TWEEN.Easing.Quintic.InOut)
+                .onUpdate(function(){
+                    console.log(arguments)
+                })
+                .start();
+        }
+    }
+</script>
+</body>
+</html>
