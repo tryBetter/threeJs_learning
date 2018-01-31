@@ -155,12 +155,12 @@
         THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
         var mtlLoader = new THREE.MTLLoader();
         mtlLoader.setPath( '../assets/model/' );
-        mtlLoader.load( 'VT_Model.mtl', function( materials ) {
+        mtlLoader.load( 'Model.mtl', function( materials ) {
             materials.preload();
             var objLoader = new THREE.OBJLoader();
             objLoader.setMaterials( materials );
             objLoader.setPath( '../assets/model/' );
-            objLoader.load( 'VT_Model.obj', function ( object ) {
+            objLoader.load( 'Model.obj', function ( object ) {
                 modelObj = object;
                 if (object.children[0]) {
                     object.children[0].material.forEach(function (element) {
